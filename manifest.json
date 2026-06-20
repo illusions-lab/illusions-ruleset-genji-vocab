@@ -1,0 +1,47 @@
+{
+  "$comment": "Ruleset meta — read WITHOUT executing code (UI listing, engineApi check, quarantine). Keep in sync with src/index.ts.",
+  "id": "com.illusions-lab.genji-vocab",
+  "name": "Genji Vocabulary Check",
+  "nameJa": "幻辞 辞書照合",
+  "version": "0.1.0",
+  "engineApi": 1,
+  "license": "MIT",
+  "maintainerEmail": "koshokenjcx@gmail.com",
+  "rulesetPrefix": "genji-",
+  "requires": [{ "kind": "dict", "dictId": "genji" }],
+  "guidelines": [
+    {
+      "id": "genji-dict",
+      "nameJa": "幻辞 辞書照合",
+      "publisherJa": "illusions-lab",
+      "year": null,
+      "license": "Public",
+      "descriptionJa": "幻辞（Genji）辞書に未収録の語を形態素解析で検出する。"
+    }
+  ],
+  "rules": [
+    {
+      "ruleId": "genji-out-of-dict",
+      "nameJa": "辞書外語の検出",
+      "descriptionJa": "幻辞（Genji）辞書に未収録の語（名詞・動詞・形容詞）を検出します。誤字・誤変換・未知語の発見に役立ちます。",
+      "guidelineId": "genji-dict",
+      "level": "L2",
+      "defaultConfig": {
+        "enabled": true,
+        "severity": "info",
+        "options": {
+          "includeProperNouns": true,
+          "includeVerbsAdjectives": true,
+          "minLength": 1
+        }
+      },
+      "applicableModes": [],
+      "requires": [{ "kind": "dict", "dictId": "genji" }],
+      "docs": {
+        "positiveExample": "彼は図書館で本を読んだ。",
+        "negativeExample": "彼は圕で本を讀んだ。",
+        "sourceReference": "幻辞（Genji）辞書データベース"
+      }
+    }
+  ]
+}

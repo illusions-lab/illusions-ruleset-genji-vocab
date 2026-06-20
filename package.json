@@ -1,0 +1,25 @@
+{
+  "name": "illusions-ruleset-genji-vocab",
+  "version": "0.1.0",
+  "private": false,
+  "description": "illusions 校正ルールセット — 幻辞（Genji）辞書に未収録の語を検出（辞書外語マーク, L2）。",
+  "type": "module",
+  "license": "MIT",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "build": "tsup",
+    "build:min": "tsup --minify",
+    "validate": "node scripts/validate.mjs",
+    "check": "npm run validate && npm run typecheck && npm run test && npm run build"
+  },
+  "devDependencies": {
+    "tsup": "^8.3.0",
+    "typescript": "^5.6.0",
+    "vitest": "^2.1.0"
+  }
+}
