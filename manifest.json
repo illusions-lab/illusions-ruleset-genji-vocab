@@ -2,7 +2,7 @@
   "$comment": "Ruleset meta — read WITHOUT executing code (UI listing, engineApi check, quarantine). Keep in sync with src/index.ts.",
   "id": "com.illusions-lab.genji-vocab",
   "name": "Genji Vocabulary Check",
-  "nameJa": "幻辞 辞書照合",
+  "nameJa": "幻辞",
   "version": "0.1.0",
   "engineApi": 1,
   "license": "MIT",
@@ -12,7 +12,7 @@
   "guidelines": [
     {
       "id": "genji-dict",
-      "nameJa": "幻辞 辞書照合",
+      "nameJa": "『幻辞.com』辞書チェック",
       "publisherJa": "illusions-lab",
       "year": null,
       "license": "Public",
