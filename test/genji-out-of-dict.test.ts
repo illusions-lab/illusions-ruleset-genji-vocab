@@ -170,3 +170,85 @@ describe("genji-out-of-dict", () => {
     expect(rule.lintWithTokens("圕", tokens, { ...CONFIG, enabled: false })).toHaveLength(0);
   });
 });
+
+// ---------------------------------------------------------------------------
+// Morphological noise filter
+//
+// Every noise term below is prewarmed as { found: false } so that WITHOUT the
+// filter it would be flagged. A green test therefore proves the filter — not a
+// prewarm gap — is what suppresses it. POS/conjugation tags reflect IPADIC's
+// real output for these surfaces (em-dash & ～ come through as 名詞,サ変接続).
+// ---------------------------------------------------------------------------
+
+const NOISE_ENTRIES: Array<[string, { found: boolean }]> = [
+  // symbols mis-tagged as nouns
+  ["——", { found: false }],
+  ["～", { found: false }],
+  ["——」", { found: false }],
+  // light verbs
+  ["する", { found: false }],
+  ["ある", { found: false }],
+  ["いる", { found: false }],
+  ["くる", { found: false }],
+  // formal nouns
+  ["ほか", { found: false }],
+  ["あいだ", { found: false }],
+  // potential verb
+  ["書ける", { found: false }],
+  // regression: real words missing from 幻辞 — MUST stay flagged
+  ["コーヒー", { found: false }],
+  ["畦道", { found: false }],
+  ["観る", { found: false }],
+];
+
+describe("genji-out-of-dict: noise filter", () => {
+  const noiseCases: Array<[string, Token]> = [
+    ["em dash ——", tok({ surface: "——", pos: "名詞", pos_detail_1: "サ変接続", basic_form: "——" })],
+    ["wave dash ～", tok({ surface: "～", pos: "名詞", pos_detail_1: "サ変接続", basic_form: "～" })],
+    ["dash + bracket ——」", tok({ surface: "——」", pos: "名詞", pos_detail_1: "サ変接続", basic_form: "——」" })],
+    ["light verb する", tok({ surface: "し", pos: "動詞", pos_detail_1: "自立", basic_form: "する", conjugation_type: "サ変・スル" })],
+    ["light verb くる", tok({ surface: "き", pos: "動詞", pos_detail_1: "自立", basic_form: "くる", conjugation_type: "カ変・クル" })],
+    ["light verb ある", tok({ surface: "あっ", pos: "動詞", pos_detail_1: "自立", basic_form: "ある", conjugation_type: "五段・ラ行" })],
+    ["light verb いる", tok({ surface: "い", pos: "動詞", pos_detail_1: "自立", basic_form: "いる", conjugation_type: "一段" })],
+    ["adverbial noun ほか (副詞可能)", tok({ surface: "ほか", pos: "名詞", pos_detail_1: "副詞可能", basic_form: "ほか" })],
+    ["adverbial noun あいだ (副詞可能)", tok({ surface: "あいだ", pos: "名詞", pos_detail_1: "副詞可能", basic_form: "あいだ" })],
+    ["potential verb 書ける", tok({ surface: "書け", pos: "動詞", pos_detail_1: "自立", basic_form: "書ける", conjugation_type: "一段" })],
+  ];
+
+  for (const [label, token] of noiseCases) {
+    it(`suppresses ${label}`, () => {
+      const rule = build({ dictEntries: NOISE_ENTRIES });
+      expect(rule.lintWithTokens(token.surface, [token], CONFIG)).toHaveLength(0);
+    });
+  }
+
+  // Regression: genuine dictionary gaps must NOT be swallowed by the filter.
+  const keepCases: Array<[string, Token]> = [
+    ["katakana コーヒー", tok({ surface: "コーヒー", pos: "名詞", pos_detail_1: "一般", basic_form: "コーヒー" })],
+    ["kanji noun 畦道", tok({ surface: "畦道", pos: "名詞", pos_detail_1: "一般", basic_form: "畦道" })],
+    ["kanji verb 観る", tok({ surface: "観", pos: "動詞", pos_detail_1: "自立", basic_form: "観る", conjugation_type: "一段" })],
+  ];
+
+  for (const [label, token] of keepCases) {
+    it(`keeps real-but-missing word: ${label}`, () => {
+      const rule = build({ dictEntries: NOISE_ENTRIES });
+      expect(rule.lintWithTokens(token.surface, [token], CONFIG)).toHaveLength(1);
+    });
+  }
+
+  it("each filter toggle re-enables its category when set false", () => {
+    const symbol = tok({ surface: "——", pos: "名詞", pos_detail_1: "サ変接続", basic_form: "——" });
+    const light = tok({ surface: "あっ", pos: "動詞", pos_detail_1: "自立", basic_form: "ある", conjugation_type: "五段・ラ行" });
+    const formal = tok({ surface: "ほか", pos: "名詞", pos_detail_1: "副詞可能", basic_form: "ほか" });
+    const potential = tok({ surface: "書け", pos: "動詞", pos_detail_1: "自立", basic_form: "書ける", conjugation_type: "一段" });
+    const rule = build({ dictEntries: NOISE_ENTRIES });
+
+    const run = (token: Token, key: string) =>
+      rule.lintWithTokens(token.surface, [token], { ...CONFIG, options: { [key]: false } });
+
+    expect(run(symbol, "filterSymbols")).toHaveLength(1);
+    expect(run(light, "filterLightVerbs")).toHaveLength(1);
+    expect(run(formal, "filterFormalNouns")).toHaveLength(1);
+    expect(run(potential, "filterDerivedConjugations")).toHaveLength(1);
+  });
+});

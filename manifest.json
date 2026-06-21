@@ -3,7 +3,7 @@
   "id": "com.illusions-lab.genji-vocab",
   "name": "Genji Vocabulary Check",
   "nameJa": "幻辞",
-  "version": "0.1.2",
+  "version": "0.2.0",
   "engineApi": 1,
   "license": "MIT",
   "maintainerEmail": "ruleset_maintainer@illusions.app",
@@ -23,7 +23,7 @@
     {
       "ruleId": "genji-out-of-dict",
       "nameJa": "未知語の検出",
-      "descriptionJa": "幻辞（Genji）辞書に未収録の語（名詞・動詞・形容詞）を検出します。誤字・誤変換・未知語の発見に役立ちます。",
+      "descriptionJa": "幻辞（Genji）辞書に未収録の語（名詞・動詞・形容詞）を検出します。誤字・誤変換・未知語の発見に役立ちます。記号・軽動詞・形式名詞・活用の派生形は型解析で除外します。",
       "guidelineId": "genji-dict",
       "level": "L2",
       "defaultConfig": {
@@ -32,7 +32,11 @@
         "options": {
           "includeProperNouns": true,
           "includeVerbsAdjectives": true,
-          "minLength": 1
+          "minLength": 1,
+          "filterSymbols": true,
+          "filterLightVerbs": true,
+          "filterFormalNouns": true,
+          "filterDerivedConjugations": true
         }
       },
       "applicableModes": ["novel", "official", "blog", "academic", "sns"],

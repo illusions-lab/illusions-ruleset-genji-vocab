@@ -26,15 +26,26 @@ import type {
 } from "illusions-lint-sdk";
 
 import { dictCandidateTerm, type DictCandidateOptions } from "../lib/dict-candidate-terms";
+import { shouldSuppress, type NoiseFilterOptions } from "../lib/genji-noise-filter";
 
 const RULE_ID = "genji-out-of-dict";
 
-function readOptions(config: LintRuleConfig): DictCandidateOptions {
+function readCandidateOptions(config: LintRuleConfig): DictCandidateOptions {
   const o = (config.options ?? {}) as Record<string, unknown>;
   return {
     includeProperNouns: o.includeProperNouns !== false,
     includeVerbsAdjectives: o.includeVerbsAdjectives !== false,
     minLength: typeof o.minLength === "number" && o.minLength >= 1 ? o.minLength : 1,
+  };
+}
+
+function readNoiseOptions(config: LintRuleConfig): NoiseFilterOptions {
+  const o = (config.options ?? {}) as Record<string, unknown>;
+  return {
+    filterSymbols: o.filterSymbols !== false,
+    filterLightVerbs: o.filterLightVerbs !== false,
+    filterFormalNouns: o.filterFormalNouns !== false,
+    filterDerivedConjugations: o.filterDerivedConjugations !== false,
   };
 }
 
@@ -65,11 +76,15 @@ export function createGenjiOutOfDict(ctx: RulesetContext, manifest: RulesetManif
       // and prewarmed. Otherwise we'd flag valid words as "out of dictionary".
       if (!config.enabled || !dict.ready) return [];
 
-      const opts = readOptions(config);
+      const candidateOpts = readCandidateOptions(config);
+      const noiseOpts = readNoiseOptions(config);
       const issues: LintIssue[] = [];
       for (const token of tokens) {
-        const term = dictCandidateTerm(token, opts);
+        const term = dictCandidateTerm(token, candidateOpts);
         if (term === null) continue;
+        // Suppress grammatical noise (symbols, light verbs, formal nouns, potential
+        // verbs) before the dictionary lookup — these are never useful "unknown words".
+        if (shouldSuppress(token, term, noiseOpts)) continue;
         const lookup = dict.lookupCached(term);
         // Skip when not prewarmed (undefined); flag only confirmed absences.
         if (lookup === undefined || lookup.found) continue;
