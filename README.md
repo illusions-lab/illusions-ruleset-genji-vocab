@@ -103,5 +103,3 @@ npm run build     # dist/index.js を生成（配布は build:min を推奨）
 
 [MIT](./LICENSE)。利用規約は [TERMS.md](./TERMS.md) を参照してください。
 辞書データ（幻辞 / Genji）のライセンスは [Genji リポジトリ](https://github.com/illusions-lab/Genji) に従います。
-</content>
-</invoke>
