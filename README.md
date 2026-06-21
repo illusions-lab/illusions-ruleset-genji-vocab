@@ -1,6 +1,6 @@
 <div align="center">
-  <img src="./OG.png" alt="幻辞 辞書外語チェック" width="100%" />
-  <h1>幻辞 — 辞書外語チェック</h1>
+  <img src="./OG.png" alt="幻辞 未知語チェック" width="100%" />
+  <h1>幻辞 — 未知語チェック</h1>
   <p><strong>illusions</strong> 校正ルールセット ／ <code>com.illusions-lab.genji-vocab</code></p>
 </div>
 
@@ -16,7 +16,7 @@
 
 ## 何をするルールセットか
 
-収録ルールは 1 つ — **`genji-out-of-dict`（辞書外語の検出, L2）** です。
+収録ルールは 1 つ — **`genji-out-of-dict`（未知語の検出, L2）** です。
 
 kuromoji のトークンから **内容語** を取り出し、その見出し語が幻辞辞書に含まれるかを照合します。
 含まれていない語に青色の波線（`info`）を引きます。

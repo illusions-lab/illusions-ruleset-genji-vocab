@@ -3,7 +3,7 @@
   "id": "com.illusions-lab.genji-vocab",
   "name": "Genji Vocabulary Check",
   "nameJa": "幻辞",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "engineApi": 1,
   "license": "MIT",
   "maintainerEmail": "ruleset_maintainer@illusions.app",
@@ -22,7 +22,7 @@
   "rules": [
     {
       "ruleId": "genji-out-of-dict",
-      "nameJa": "辞書外語の検出",
+      "nameJa": "未知語の検出",
       "descriptionJa": "幻辞（Genji）辞書に未収録の語（名詞・動詞・形容詞）を検出します。誤字・誤変換・未知語の発見に役立ちます。",
       "guidelineId": "genji-dict",
       "level": "L2",
@@ -35,7 +35,7 @@
           "minLength": 1
         }
       },
-      "applicableModes": [],
+      "applicableModes": ["novel", "official", "blog", "academic", "sns"],
       "requires": [{ "kind": "dict", "dictId": "genji" }],
       "docs": {
         "positiveExample": "彼は図書館で本を読んだ。",
