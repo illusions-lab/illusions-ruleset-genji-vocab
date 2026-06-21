@@ -6,7 +6,7 @@
   "version": "0.1.0",
   "engineApi": 1,
   "license": "MIT",
-  "maintainerEmail": "koshokenjcx@gmail.com",
+  "maintainerEmail": "ruleset_maintainer@illusions.app",
   "rulesetPrefix": "genji-",
   "requires": [{ "kind": "dict", "dictId": "genji" }],
   "guidelines": [
