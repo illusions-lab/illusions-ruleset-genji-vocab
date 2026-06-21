@@ -1,6 +1,6 @@
 {
   "name": "illusions-ruleset-genji-vocab",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "private": false,
   "description": "illusions 校正ルールセット — 幻辞（Genji）辞書に未収録の語を検出（辞書外語マーク, L2）。",
   "type": "module",
