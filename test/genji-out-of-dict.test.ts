@@ -2,6 +2,7 @@ import { describe, it, expect } from "vitest";
 import type { LintIssue, LintRule, LintRuleConfig, Token } from "illusions-lint-sdk";
 
 import ruleset from "../src/index";
+import manifest from "../manifest.json";
 import { createTestContext, type TestContextOptions } from "./test-kit";
 
 // ---------------------------------------------------------------------------
@@ -121,6 +122,26 @@ describe("genji-out-of-dict", () => {
     const tokens = [tok({ surface: "讀ん", pos: "動詞", pos_detail_1: "自立", basic_form: "讀む" })];
     const cfg: LintRuleConfig = { ...CONFIG, options: { includeVerbsAdjectives: false } };
     expect(rule.lintWithTokens("讀ん", tokens, cfg)).toHaveLength(0);
+  });
+
+  // The shipped default scopes detection to nouns: 幻辞 carries few everyday
+  // verbs/adjectives, so checking them floods the user with false positives
+  // (青い・旨い・測る・観る…). Verb/adjective checking stays available behind the
+  // includeVerbsAdjectives option for users who opt in.
+  it("manifest defaultConfig disables verb/adjective checking", () => {
+    const opts = (manifest.rules[0].defaultConfig.options ?? {}) as Record<string, unknown>;
+    expect(opts.includeVerbsAdjectives).toBe(false);
+  });
+
+  it("under the manifest default config: nouns flagged, out-of-dict verbs ignored", () => {
+    const rule = build({ dictEntries: ENTRIES });
+    const defaultConfig = manifest.rules[0].defaultConfig as unknown as LintRuleConfig;
+    // An out-of-dictionary verb is NOT flagged by default (verbs are out of scope).
+    const verb = [tok({ surface: "讀ん", pos: "動詞", pos_detail_1: "自立", basic_form: "讀む" })];
+    expect(rule.lintWithTokens("讀ん", verb, defaultConfig)).toHaveLength(0);
+    // An out-of-dictionary noun is still flagged by default.
+    const noun = [tok({ surface: "圕", pos: "名詞", pos_detail_1: "一般" })];
+    expect(rule.lintWithTokens("圕", noun, defaultConfig)).toHaveLength(1);
   });
 
   it("ignores particles, auxiliaries, symbols, numbers, pronouns and suffixes", () => {
