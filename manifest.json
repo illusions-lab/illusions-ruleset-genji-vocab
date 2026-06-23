@@ -3,7 +3,7 @@
   "id": "com.illusions-lab.genji-vocab",
   "name": "Genji Vocabulary Check",
   "nameJa": "幻辞",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "engineApi": 1,
   "license": "MIT",
   "maintainerEmail": "ruleset_maintainer@illusions.app",
@@ -40,6 +40,7 @@
         }
       },
       "applicableModes": ["novel", "official", "blog", "academic", "sns"],
+      "suggestsDictionaryEntry": true,
       "requires": [{ "kind": "dict", "dictId": "genji" }],
       "docs": {
         "positiveExample": "彼は図書館で本を読んだ。",

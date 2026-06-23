@@ -196,6 +196,12 @@ declare module "illusions-lint-sdk" {
     defaultConfig: LintRuleConfig;
     supportsSkipDialogue?: boolean;
     /**
+     * Declares that issues from this rule can be resolved by adding the flagged
+     * word to the user dictionary. Pure data: the host renders the action and
+     * owns the write. Default (absent) = no such action.
+     */
+    suggestsDictionaryEntry?: boolean;
+    /**
      * Correction modes this rule auto-enables in. Switching to a listed mode
      * turns the rule on automatically. Empty array = manual toggle only.
      */
